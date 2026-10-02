@@ -1,0 +1,402 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/luoshuai990529/jev-laya-lab/main/examples/dataset.schema.json",
+  "title": "Jev × Laya 决策数据集 v1",
+  "$comment": "Apply to normalized text values after trimming. Application additionally enforces unique question IDs, UTF-16 text-length limits, and an 8 MiB HTTP request limit. Standard JSON Schema counts Unicode code points rather than UTF-16 units.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "name",
+    "questions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "\\S"
+    },
+    "instructions": {
+      "type": "string",
+      "maxLength": 3000
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/question"
+      }
+    }
+  },
+  "$defs": {
+    "optionText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "\\S"
+    },
+    "question": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "question",
+        "options",
+        "answer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "\\S"
+        },
+        "type": {
+          "enum": [
+            "single",
+            "multiple",
+            "boolean"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 5000,
+          "pattern": "\\S"
+        },
+        "options": {
+          "type": "object"
+        },
+        "answer": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 7,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E",
+              "F",
+              "G"
+            ]
+          }
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "\\S"
+        },
+        "explanation": {
+          "type": "string",
+          "maxLength": 5000
+        }
+      },
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B",
+                    "C"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "C": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B",
+                      "C"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B",
+                    "C",
+                    "D"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "C": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "D": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B",
+                      "C",
+                      "D"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "C": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "D": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "E": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B",
+                      "C",
+                      "D",
+                      "E"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+                    "F"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "C": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "D": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "E": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "F": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B",
+                      "C",
+                      "D",
+                      "E",
+                      "F"
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "required": [
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+                    "F",
+                    "G"
+                  ],
+                  "properties": {
+                    "A": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "B": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "C": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "D": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "E": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "F": {
+                      "$ref": "#/$defs/optionText"
+                    },
+                    "G": {
+                      "$ref": "#/$defs/optionText"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "answer": {
+                  "items": {
+                    "enum": [
+                      "A",
+                      "B",
+                      "C",
+                      "D",
+                      "E",
+                      "F",
+                      "G"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": [
+                  "single",
+                  "boolean"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "answer": {
+                "maxItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "boolean"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "options": {
+                "required": [
+                  "A",
+                  "B"
+                ],
+                "maxProperties": 2,
+                "properties": {
+                  "A": {
+                    "const": "正确"
+                  },
+                  "B": {
+                    "const": "错误"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

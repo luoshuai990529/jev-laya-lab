@@ -1,0 +1,10 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createApp } from './app.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const port=Number(process.env.PORT??4317);
+if(!Number.isInteger(port)||port<1||port>65535)throw Error('PORT 必须为 1–65535');
+const app=await createApp({root});
+app.server.on('error',e=>{console.error(e.code==='EADDRINUSE'?`端口 ${port} 已被使用，请打开现有应用或换一个 PORT。`:e.message);process.exitCode=1;});
+app.server.listen(port,'127.0.0.1',()=>console.log(`Jev × Laya 决策实验台已启动：http://127.0.0.1:${port}\n题库：${app.bank.metadata.total} 题 / ${app.bank.metadata.textOnly} 道无图题\n按 Ctrl+C 停止。`));
+for(const signal of ['SIGINT','SIGTERM'])process.on(signal,async()=>{await app.close();process.exit(0);});
