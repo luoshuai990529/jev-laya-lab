@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { compileQuestion, interpret, MODES, summarize, selectQuestions, thresholds } from './decisions.mjs';
-import { callProvider, ready } from './providers.mjs';
+import { callProvider, ready, PROVIDERS } from './providers.mjs';
 
 const timestamp=()=>new Date().toISOString();
 const elapsed=start=>Math.round(performance.now()-start);
@@ -26,7 +26,7 @@ export class RunManager {
  plan(body,requireReady=false) {
   const providers=body.providers??['jev'],modes=body.modes??['choice'];
   const options={...thresholds(body.options),instructions:String(body.options?.instructions??'')};
-  if(!Array.isArray(providers)||!providers.length||providers.length>2||new Set(providers).size!==providers.length||providers.some(p=>!['jev','laya'].includes(p)))throw Error('请选择 Jev、Laya 或两者');
+  if(!Array.isArray(providers)||!providers.length||providers.length>PROVIDERS.length||new Set(providers).size!==providers.length||providers.some(p=>!PROVIDERS.includes(p)))throw Error('请选择 Jev、Laya、StartLux 中的一个或多个模型');
   if(!Array.isArray(modes)||!modes.length||new Set(modes).size!==modes.length||modes.some(m=>!MODES.includes(m)))throw Error('请选择有效的答题模式');
   const concurrency=body.concurrency??1;
   if(!Number.isInteger(concurrency)||concurrency<1||concurrency>4)throw Error('并发数应为 1–4 的整数');

@@ -129,3 +129,19 @@ test('custom question ids cannot inherit a bundled image description',async t=>{
  assert(!('image_description' in preview.data.requests[0].request.state));
  assert(!JSON.stringify(preview.data).includes('独有描述'));
 });
+
+ test('StartLux joins Jev and Laya with independent settings and identical question payloads',async t=>{
+ const {call,fake}=await setup(t);
+ for(const provider of ['jev','laya','startlux']){
+  const saved=await call('/api/config',{provider,endpoint:fake.url+'/v1/systemone',model:provider,key:provider==='jev'?'private-test-key':''});
+  assert.equal(saved.status,200);
+ }
+ const body={filter:{count:2,seed:'three-models'},providers:['jev','laya','startlux'],modes:['choice'],concurrency:1};
+ const preview=await call('/api/preview',body);assert.equal(preview.data.total,6);
+ const start=await call('/api/runs',body);assert.equal(start.status,201);
+ const run=await wait(call,start.data.id);assert.equal(run.summary.success,6);assert.equal(run.timings.length,3);
+ const grouped=provider=>fake.requests.filter(x=>x.payload.model===provider).map(({payload:{model,...payload}})=>payload);
+ assert.deepEqual(grouped('startlux'),grouped('jev'));assert.deepEqual(grouped('startlux'),grouped('laya'));
+ assert.equal((await call('/api/connection',{provider:'startlux'})).status,200);
+ assert(!JSON.stringify(run).includes('private-test-key'));
+ });

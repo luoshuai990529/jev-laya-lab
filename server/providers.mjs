@@ -1,5 +1,7 @@
+export const PROVIDERS = ['jev','laya','startlux'];
 export const DEFAULT_CONFIG = {
  jev:{endpoint:'https://api.typesafe.ai/v1/systemone',model:'jev-1.13.0',key:'',remember:false,timeoutMs:45000},
+ startlux:{endpoint:'http://127.0.0.1:8090/v1/systemone',model:'StartLux-Decision-4B-Q8_0',key:'',remember:false,timeoutMs:180000},
  laya:{endpoint:'http://127.0.0.1:8011/v1/systemone',model:'multilingual',key:'',remember:false,timeoutMs:180000}
 };
 export function validateEndpoint(endpoint){
@@ -11,7 +13,7 @@ export function validateEndpoint(endpoint){
 }
 export class ConfigStore {
  constructor(store){this.store=store;this.values=structuredClone(DEFAULT_CONFIG);}
- async init(){const saved=await this.store.read('config.json',{});for(const k of ['jev','laya'])if(saved[k])this.values[k]={...this.values[k],...saved[k]};}
+ async init(){const saved=await this.store.read('config.json',{});for(const k of PROVIDERS)if(saved[k])this.values[k]={...this.values[k],...saved[k]};}
  public(){return Object.fromEntries(Object.entries(this.values).map(([k,v])=>[k,{endpoint:v.endpoint,model:v.model,timeoutMs:v.timeoutMs,remember:v.remember,hasKey:Boolean(v.key)}]));}
  snapshot(provider){if(!Object.hasOwn(this.values,provider))throw Error('未知模型服务');return {...this.values[provider]};}
  async update(body){
@@ -48,7 +50,7 @@ async function jsonRequest(config,url,method,body,signal){
  }catch(e){
   if(e instanceof ProviderError)throw e;
   if(signal?.aborted)throw new ProviderError('用户已取消');
-  if(e.name==='TimeoutError'||e.name==='AbortError')throw new ProviderError('模型请求超时，未自动重试；本地 Laya 首次需要下载权重，可在配置页查看状态');
+  if(e.name==='TimeoutError'||e.name==='AbortError')throw new ProviderError('模型请求超时，未自动重试；本地模型首次需要加载权重，可在配置页查看状态');
   throw new ProviderError(sanitize('无法连接模型服务，请检查地址、网络和服务状态。'+(e.cause?.code??e.message),config.key));
  }
 }
